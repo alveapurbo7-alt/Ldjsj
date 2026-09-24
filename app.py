@@ -26,7 +26,7 @@ from threading import Thread
 app = Flask('')
 @app.route('/')
 def home():
-    return "🤖 𝘿𝙚𝙫𝙚𝙡𝙤𝙥𝙚𝙧 𝘼𝙥𝙪𝙧𝙗𝙤  🇧🇩 is Running!"
+    return "ApurboCloud is Running!"
 @app.route('/health')
 def health():
     return {"status": "healthy", "uptime": get_uptime()}
@@ -40,11 +40,11 @@ def keep_alive():
     print("✅ Flask Keep-Alive server started.")
 # --- End Flask Keep Alive ---
 # --- Configuration ---
-TOKEN = '8743314560:AAFdHnMmBNFjNO6RopnE_s3G0kdpLhmJ-_U'
+TOKEN = '8758454653:AAFm-BvtGKhqqwtDlnNI1CxlBrj4MeeBbPo'
 OWNER_ID = 7044717347
 ADMIN_ID = 7044717347
-YOUR_USERNAME = '@ufbapurboyt730'
-UPDATE_CHANNEL = 't.me/ufbapurboyt730'
+YOUR_USERNAME = 'ufbapurboyt730'
+UPDATE_CHANNEL = 't.me/apurbo_world'
 # Folder setup
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 UPLOAD_BOTS_DIR = os.path.join(BASE_DIR, 'upload_bots')
@@ -87,9 +87,9 @@ class ProgressAnimation:
     """Handles progress bar animations"""
     @staticmethod
     def create_progress_bar(current, total, length=4, style='blocks'):
-        """Create a progress bar string using 🟩 and ⬜ (fixed 4-length, no % in bar)"""
+        """Create a progress bar string using █ and ░ (fixed 4-length, no % in bar)"""
         progress = int((current / total) * length)
-        bar = "🟩" * progress + "⬜" * (length - progress)
+        bar = "█" * progress + "░" * (length - progress)
         return f"[{bar}]"
 
 class TerminalAnimation:
@@ -147,7 +147,7 @@ def send_animated_message(chat_id, final_text, animation_type="loading", duratio
         msg = None
         for i in range(steps + 1):
             percent = int((i / steps) * 100)
-            bar = "🟩" * i + "⬜" * (steps - i)
+            bar = "█" * i + "░" * (steps - i)
             display = f"⚙️ 𝐋ᴏᴀᴅɪɴɢ... ({percent}%)\n[{bar}] {action_text}..."
             if i == 0:
                 msg = bot.send_message(chat_id, display)
@@ -169,12 +169,12 @@ def send_animated_message(chat_id, final_text, animation_type="loading", duratio
         return bot.send_message(chat_id, final_text, parse_mode='HTML')
 
 def send_progress_animation(chat_id, action_text, total_steps=4, callback=None):
-    """Send progress using new style: ⚙️ 𝐋ᴏᴀᴅɪɴɢ... + [🟩...]"""
+    """Send progress using new style: ⚙️ 𝐋ᴏᴀᴅɪɴɢ... + [█...]"""
     try:
         msg = None
         for step in range(total_steps + 1):
             percent = int((step / total_steps) * 100)
-            bar = "🟩" * step + "⬜" * (total_steps - step)
+            bar = "█" * step + "░" * (total_steps - step)
             display = f"⚙️ 𝐋ᴏᴀᴅɪɴɢ... ({percent}%)\n[{bar}] {action_text}..."
             if step == 0:
                 msg = bot.send_message(chat_id, display)
@@ -236,7 +236,7 @@ def create_system_stats_message():
     running_bots = len([k for k, v in bot_scripts.items() if v.get('process') and is_bot_running_check(k)])
     msg = f"""
 ╔══════════════════════════════════════╗
-║       📊 <b>𝘿𝙚𝙫𝙚𝙡𝙤𝙥𝙚𝙧 𝘼𝙥𝙪𝙧𝙗𝙤  𝐒𝐓𝐀𝐓𝐒</b> 📊         ║
+║       📊 <b>ApurboCloud  𝐒𝐓𝐀𝐓𝐒</b> 📊           ║
 ╠══════════════════════════════════════╣
 ║ 🖥️ <b>𝐂𝐏𝐔 𝐔𝐬𝐚𝐠𝐞:</b> {stats['cpu']}%
 ║ {create_mini_bar(stats['cpu'])}
@@ -1019,8 +1019,8 @@ def process_broadcast(message):
         except:
             failed += 1
         if (i + 1) % 10 == 0:
-            bar = "🟩" * ((i + 1) // (total // 4) if total > 0 else 0) + "⬜" * (4 - (i + 1) // (total // 4) if total > 0 else 4)
-            bar = bar[:4].ljust(4, "⬜")
+            bar = "█" * ((i + 1) // (total // 4) if total > 0 else 0) + "░" * (4 - (i + 1) // (total // 4) if total > 0 else 4)
+            bar = bar[:4].ljust(4, "░")
             try:
                 bot.edit_message_text(
                     f"⚙️ 𝐋ᴏᴀᴅɪɴɢ... ({int((i+1)/total*100)}%)\n[{bar}] 𝐁𝐫𝐨𝐚𝐝𝐜𝐚𝐬𝐭𝐢𝐧𝐠...",
