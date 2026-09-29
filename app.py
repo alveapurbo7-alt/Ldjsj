@@ -40,7 +40,7 @@ def keep_alive():
     print("✅ Flask Keep-Alive server started.")
 # --- End Flask Keep Alive ---
 # --- Configuration ---
-TOKEN = '8758454653:AAFm-BvtGKhqqwtDlnNI1CxlBrj4MeeBbPo'
+TOKEN = '8816036791:AAFqv-V2N6Pgf7eUHVZGGbtsn0PojgYqdx8'
 OWNER_ID = 7044717347
 ADMIN_ID = 7044717347
 YOUR_USERNAME = 'ufbapurboyt730'
