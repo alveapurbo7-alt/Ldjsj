@@ -26,12 +26,42 @@ from threading import Thread
 app = Flask('')
 @app.route('/')
 def home():
-    return "ApurboCloud is Running!"
+    uptime = get_uptime()
+    page = """<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ApurboCloud • Premium Control</title>
+<style>
+:root {color-scheme:dark;--bg:#070b14;--card:rgba(18,25,42,.72);--line:rgba(255,255,255,.10);--text:#f7f9ff;--muted:#a9b4c8;--accent:#7c5cff;--accent2:#00d4ff}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;background:radial-gradient(circle at 15% 15%,rgba(124,92,255,.25),transparent 30%),radial-gradient(circle at 85% 85%,rgba(0,212,255,.16),transparent 30%),var(--bg);color:var(--text);display:grid;place-items:center;padding:24px}
+.wrap{width:min(920px,100%)}.card{background:var(--card);border:1px solid var(--line);border-radius:28px;padding:34px;backdrop-filter:blur(22px);box-shadow:0 24px 80px rgba(0,0,0,.45)}
+.badge{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.05);font-size:13px;color:#dce5ff}.dot{width:9px;height:9px;border-radius:50%;background:#39e58c;box-shadow:0 0 14px #39e58c}
+h1{font-size:clamp(34px,6vw,58px);line-height:1.02;margin:20px 0 12px;letter-spacing:-2px}.grad{background:linear-gradient(90deg,#fff,var(--accent2),#b79cff);-webkit-background-clip:text;background-clip:text;color:transparent}
+p{color:var(--muted);font-size:16px;line-height:1.7;margin:0 0 26px}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.stat{padding:18px;border:1px solid var(--line);border-radius:18px;background:rgba(255,255,255,.035)}
+.label{font-size:12px;text-transform:uppercase;letter-spacing:1px;color:var(--muted)}.value{font-size:20px;font-weight:700;margin-top:8px}.footer{margin-top:24px;color:#77839a;font-size:12px}
+@media(max-width:650px){.grid{grid-template-columns:1fr}.card{padding:24px}}
+</style>
+</head>
+<body><main class="wrap"><section class="card">
+<span class="badge"><span class="dot"></span> SYSTEM ONLINE</span>
+<h1>Welcome to <span class="grad">ApurboCloud</span></h1>
+<p>Premium Telegram bot hosting control service is online and responding normally.</p>
+<div class="grid">
+<div class="stat"><div class="label">Status</div><div class="value">🟢 Healthy</div></div>
+<div class="stat"><div class="label">Uptime</div><div class="value">__UPTIME__</div></div>
+<div class="stat"><div class="label">Port</div><div class="value">8083</div></div>
+</div>
+<div class="footer">ApurboCloud • Premium Runtime Dashboard</div>
+</section></main></body></html>"""
+    return page.replace("__UPTIME__", uptime)
+
 @app.route('/health')
 def health():
-    return {"status": "healthy", "uptime": get_uptime()}
+    return {"status": "healthy", "uptime": get_uptime(), "port": 8083}
 def run_flask():
-    port = int(os.environ.get("PORT", 8080))
+    port = int(os.environ.get("PORT", 8083))
     app.run(host='0.0.0.0', port=port)
 def keep_alive():
     t = Thread(target=run_flask)
@@ -601,7 +631,7 @@ def run_script(script_path, script_owner_id, user_folder, file_name, message_obj
             return
         terminal_msg = f"""
 ╔══════════════════════════════════════╗
-║      🚀 <b>𝘿𝙚𝙫𝙚𝙡𝙤𝙥𝙚𝙧 𝘼𝙥𝙪𝙧𝙗𝙤: STARTING SCRIPT</b> 🚀 ║
+║      🚀 <b>APURBO DEV: STARTING SCRIPT</b> 🚀 ║
 ╠══════════════════════════════════════╣
 ║ 📄 File: <code>{file_name[:25]}</code>
 ║ 👤 User: {script_owner_id}
@@ -634,7 +664,7 @@ def run_script(script_path, script_owner_id, user_folder, file_name, message_obj
         if process.poll() is None:
             success_msg = f"""
 ╔══════════════════════════════════════╗
-║     ✅ <b>𝘿𝙚𝙫𝙚𝙡𝙤𝙥𝙚𝙧 𝘼𝙥𝙪𝙧𝙗𝙤: SCRIPT RUNNING</b> ✅   ║
+║     ✅ <b>APURBO DEV: SCRIPT RUNNING</b> ✅   ║
 ╠══════════════════════════════════════╣
 ║ 📄 <b>File:</b> <code>{file_name[:25]}</code>
 ║ 🆔 <b>PID:</b> {process.pid}
@@ -659,7 +689,7 @@ def run_script(script_path, script_owner_id, user_folder, file_name, message_obj
                     return
             error_msg = f"""
 ╔══════════════════════════════════════╗
-║     ❌ <b>𝘿𝙚𝙫𝙚𝙡𝙤𝙥𝙚𝙧 𝘼𝙥𝙪𝙧𝙗𝙤 : SCRIPT FAILED</b> ❌     ║
+║     ❌ <b>APURBO DEV : SCRIPT FAILED</b> ❌     ║
 ╠══════════════════════════════════════╣
 ║ 📄 <b>File:</b> <code>{file_name[:25]}</code>
 ║ ❗ <b>Exit Code:</b> {process.returncode}
@@ -690,7 +720,7 @@ def run_js_script(script_path, script_owner_id, user_folder, file_name, message_
             return
         terminal_msg = f"""
 ╔══════════════════════════════════════╗
-║      🟢 <b>𝘿𝙚𝙫𝙚𝙡𝙤𝙥𝙚𝙧 𝘼𝙥𝙪𝙧𝙗𝙤: STARTING NODE.JS</b> 🟢║
+║      🟢 <b>APURBO DEV: STARTING NODE.JS</b> 🟢║
 ╠══════════════════════════════════════╣
 ║ 📄 File: <code>{file_name[:25]}</code>
 ║ 👤 User: {script_owner_id}
@@ -724,7 +754,7 @@ def run_js_script(script_path, script_owner_id, user_folder, file_name, message_
         if process.poll() is None:
             success_msg = f"""
 ╔══════════════════════════════════════╗
-║     ✅ <b>𝘿𝙚𝙫𝙚𝙡𝙤𝙥𝙚𝙧 𝘼𝙥𝙪𝙧𝙗𝙤 : NODE.JS RUNNING</b> ✅  ║
+║     ✅ <b>APURBO DEV : NODE.JS RUNNING</b> ✅  ║
 ╠══════════════════════════════════════╣
 ║ 📄 <b>File:</b> <code>{file_name[:25]}</code>
 ║ 🆔 <b>PID:</b> {process.pid}
@@ -748,7 +778,7 @@ def run_js_script(script_path, script_owner_id, user_folder, file_name, message_
                     return
             error_msg = f"""
 ╔══════════════════════════════════════╗
-║     ❌ <b>𝘿𝙚𝙫𝙚𝙡𝙤𝙥𝙚𝙧 𝘼𝙥𝙪𝙧𝙗𝙤 : NODE.JS FAILED</b> ❌    ║
+║     ❌ <b>APURBO DEV : NODE.JS FAILED</b> ❌    ║
 ╠══════════════════════════════════════╣
 ║ 📄 <b>File:</b> <code>{file_name[:25]}</code>
 ║ ❗ <b>Exit Code:</b> {process.returncode}
@@ -822,7 +852,7 @@ def start_command(message):
         return
     welcome_text = f"""
 ╔══════════════════════════════════════╗
-║    🤖 <b>𝘿𝙚𝙫𝙚𝙡𝙤𝙥𝙚𝙧 𝘼𝙥𝙪𝙧𝙗𝙤  🇧🇩</b>                 ║
+║    🤖 <b>APURBO DEV  🇧🇩</b>                 ║
 ╠══════════════════════════════════════╣
 ║
 ║  👋 𝐖𝐞𝐥𝐜𝐨𝐦𝐞, <b>{message.from_user.first_name}</b>!
@@ -848,7 +878,7 @@ def help_command(message):
     """Handle /help command"""
     help_text = """
 ╔══════════════════════════════════════╗
-║       📚 <b>𝘿𝙚𝙫𝙚𝙡𝙤𝙥𝙚𝙧 𝘼𝙥𝙪𝙧𝙗𝙤  HELP</b> 📚          ║
+║       📚 <b>APURBO DEV  HELP</b> 📚          ║
 ╠══════════════════════════════════════╣
 ║
 ║ <b>📤 𝐅𝐢𝐥𝐞 𝐌𝐚𝐧𝐚𝐠𝐞𝐦𝐞𝐧𝐭:</b>
@@ -879,7 +909,7 @@ def help_command(message):
 def stats_command(message):
     """Handle /stats command"""
     user_id = message.from_user.id
-    msg = send_spinner_animation(message.chat.id, "𝐆𝐚𝐭𝐡𝐞𝐫𝐢𝐧𝐠 𝘿𝙚𝙫𝙚𝙡𝙤𝙥𝙚𝙧 𝘼𝙥𝙪𝙧𝙗𝙤 𝐬𝐭𝐚𝐭𝐬...", duration=2)
+    msg = send_spinner_animation(message.chat.id, "𝐆𝐚𝐭𝐡𝐞𝐫𝐢𝐧𝐠 APURBO DEV 𝐬𝐭𝐚𝐭𝐬...", duration=2)
     stats_text = create_system_stats_message()
     try:
         bot.edit_message_text(stats_text, message.chat.id, msg.message_id, parse_mode='HTML')
@@ -889,14 +919,14 @@ def stats_command(message):
 @bot.message_handler(commands=['speed'])
 def speed_command(message):
     """Handle /speed command"""
-    msg = send_spinner_animation(message.chat.id, "𝐓𝐞𝐬𝐭𝐢𝐧𝐠 𝘿𝙚𝙫𝙚𝙡𝙤𝙥𝙚𝙧 𝘼𝙥𝙪𝙧𝙗𝙤 𝐬𝐩𝐞𝐞𝐝...", duration=2)
+    msg = send_spinner_animation(message.chat.id, "𝐓𝐞𝐬𝐭𝐢𝐧𝐠 APURBO DEV 𝐬𝐩𝐞𝐞𝐝...", duration=2)
     start_time = time.time()
     latency = (time.time() - start_time) * 1000
     cpu = psutil.cpu_percent()
     memory = psutil.virtual_memory().percent
     speed_text = f"""
 ╔══════════════════════════════════════╗
-║        ⚡ <b>𝘿𝙚𝙫𝙚𝙡𝙤𝙥𝙚𝙧 𝘼𝙥𝙪𝙧𝙗𝙤  𝐒𝐏𝐄𝐄𝐃</b> ⚡        ║
+║        ⚡ <b>APURBO DEV  𝐒𝐏𝐄𝐄𝐃</b> ⚡        ║
 ╠══════════════════════════════════════╣
 ║
 ║  🏓 <b>𝐋𝐚𝐭𝐞𝐧𝐜𝐲:</b> {latency:.2f}𝐦𝐬
@@ -917,7 +947,7 @@ def speed_command(message):
 def running_command(message):
     """Show running bots"""
     user_id = message.from_user.id
-    msg = send_spinner_animation(message.chat.id, "𝐅𝐞𝐭𝐜𝐡𝐢𝐧𝐠 𝘿𝙚𝙫𝙚𝙡𝙤𝙥𝙚𝙧 𝘼𝙥𝙪𝙧𝙗𝙤 𝐛𝐨𝐭𝐬...", duration=1)
+    msg = send_spinner_animation(message.chat.id, "𝐅𝐞𝐭𝐜𝐡𝐢𝐧𝐠 APURBO DEV 𝐛𝐨𝐭𝐬...", duration=1)
     running_bots = []
     for script_key, info in bot_scripts.items():
         if is_bot_running_check(script_key):
@@ -933,7 +963,7 @@ def running_command(message):
     if running_bots:
         text = """
 ╔══════════════════════════════════════╗
-║      🟢 <b>𝘿𝙚𝙫𝙚𝙡𝙤𝙥𝙚𝙧 𝘼𝙥𝙪𝙧𝙗𝙤  𝐁𝐎𝐓𝐒</b> 🟢           ║
+║      🟢 <b>APURBO DEV  𝐁𝐎𝐓𝐒</b> 🟢           ║
 ╠══════════════════════════════════════╣
 """
         for i, bot_info in enumerate(running_bots, 1):
@@ -947,7 +977,7 @@ def running_command(message):
     else:
         text = """
 ╔══════════════════════════════════════╗
-║      🔴 <b>𝐍𝐎 𝘿𝙚𝙫𝙚𝙡𝙤𝙥𝙚𝙧 𝘼𝙥𝙪𝙧𝙗𝙤 𝐁𝐎𝐓𝐒</b> 🔴        ║
+║      🔴 <b>𝐍𝐎 APURBO DEV 𝐁𝐎𝐓𝐒</b> 🔴        ║
 ╠══════════════════════════════════════╣
 ║
 ║  𝐍𝐨 𝐬𝐜𝐫𝐢𝐩𝐭𝐬 𝐚𝐫𝐞 𝐜𝐮𝐫𝐫𝐞𝐧𝐭𝐥𝐲 𝐫𝐮𝐧𝐧𝐢𝐧𝐠.
@@ -972,7 +1002,7 @@ def lock_command(message):
     status = "🔒 𝐋𝐎𝐂𝐊𝐄𝐃" if bot_locked else "🔓 𝐔𝐍𝐋𝐎𝐂𝐊𝐄𝐃"
     lock_text = f"""
 ╔══════════════════════════════════════╗
-║         🔐 <b>𝘿𝙚𝙫𝙚𝙡𝙤𝙥𝙚𝙧 𝘼𝙥𝙪𝙧𝙗𝙤 𝐒𝐓𝐀𝐓𝐔𝐒</b> 🔐       ║
+║         🔐 <b>APURBO DEV 𝐒𝐓𝐀𝐓𝐔𝐒</b> 🔐       ║
 ╠══════════════════════════════════════╣
 ║
 ║  𝐒𝐭𝐚𝐭𝐮𝐬: {status}
@@ -999,7 +1029,7 @@ def process_broadcast(message):
     if not broadcast_text:
         bot.reply_to(message, "❌ 𝐏𝐥𝐞𝐚𝐬𝐞 𝐬𝐞𝐧𝐝 𝐚 𝐭𝐞𝐱𝐭 𝐦𝐞𝐬𝐬𝐚𝐠𝐞!")
         return
-    progress_msg = bot.send_message(message.chat.id, "📢 𝐒𝐭𝐚𝐫𝐭𝐢𝐧𝐠 𝘿𝙚𝙫𝙚𝙡𝙤𝙥𝙚𝙧 𝘼𝙥𝙪𝙧𝙗𝙤 𝐛𝐫𝐨𝐚𝐝𝐜𝐚𝐬𝐭...")
+    progress_msg = bot.send_message(message.chat.id, "📢 𝐒𝐭𝐚𝐫𝐭𝐢𝐧𝐠 APURBO DEV 𝐛𝐫𝐨𝐚𝐝𝐜𝐚𝐬𝐭...")
     success = 0
     failed = 0
     total = len(active_users)
@@ -1007,7 +1037,7 @@ def process_broadcast(message):
         try:
             formatted_msg = f"""
 ╔══════════════════════════════════════╗
-║      📢 <b>𝘿𝙚𝙫𝙚𝙡𝙤𝙥𝙚𝙧 𝘼𝙥𝙪𝙧𝙗𝙤  🇧🇩 𝐁𝐑𝐎𝐀𝐃𝐂𝐀𝐒𝐓</b> 📢    ║
+║      📢 <b>APURBO DEV  🇧🇩 𝐁𝐑𝐎𝐀𝐃𝐂𝐀𝐒𝐓</b> 📢    ║
 ╠══════════════════════════════════════╣
 ║
 {broadcast_text}
@@ -1030,7 +1060,7 @@ def process_broadcast(message):
                 pass
     result_text = f"""
 ╔══════════════════════════════════════╗
-║     ✅ <b>𝘿𝙚𝙫𝙚𝙡𝙤𝙥𝙚𝙧 𝘼𝙥𝙪𝙧𝙗𝙤 𝐁𝐑𝐎𝐀𝐃𝐂𝐀𝐒𝐓 𝐂𝐎𝐌𝐏𝐋𝐄𝐓𝐄</b> ✅ ║
+║     ✅ <b>APURBO DEV 𝐁𝐑𝐎𝐀𝐃𝐂𝐀𝐒𝐓 𝐂𝐎𝐌𝐏𝐋𝐄𝐓𝐄</b> ✅ ║
 ╠══════════════════════════════════════╣
 ║
 ║  📤 𝐓𝐨𝐭𝐚𝐥: {total}
@@ -1066,7 +1096,7 @@ def subscribe_command(message):
     save_subscription(target_user, expiry)
     sub_text = f"""
 ╔══════════════════════════════════════╗
-║      ✅ <b>𝘿𝙚𝙫𝙚𝙡𝙤𝙥𝙚𝙧 𝘼𝙥𝙪𝙧𝙗𝙤  𝐒𝐔𝐁𝐒𝐂𝐑𝐈𝐏𝐓𝐈𝐎𝐍</b> ✅   ║
+║      ✅ <b>APURBO DEV  𝐒𝐔𝐁𝐒𝐂𝐑𝐈𝐏𝐓𝐈𝐎𝐍</b> ✅   ║
 ╠══════════════════════════════════════╣
 ║
 ║  👤 𝐔𝐬𝐞𝐫: {target_user}
@@ -1077,7 +1107,7 @@ def subscribe_command(message):
 """
     send_animated_message(message.chat.id, sub_text, "loading", duration=1)
     try:
-        bot.send_message(target_user, f"🎉 𝐘𝐨𝐮'𝐯𝐞 𝐛𝐞𝐞𝐧 𝐬𝐮𝐛𝐬𝐜𝐫𝐢𝐛𝐞𝐝 𝐟𝐨𝐫 {days} 𝐝𝐚𝐲𝐬 𝐛𝐲 𝘿𝙚𝙫𝙚𝙡𝙤𝙥𝙚𝙧 𝘼𝙥𝙪𝙧𝙗𝙤")
+        bot.send_message(target_user, f"🎉 𝐘𝐨𝐮'𝐯𝐞 𝐛𝐞𝐞𝐧 𝐬𝐮𝐛𝐬𝐜𝐫𝐢𝐛𝐞𝐝 𝐟𝐨𝐫 {days} 𝐝𝐚𝐲𝐬 𝐛𝐲 APURBO DEV")
     except:
         pass
 
@@ -1092,7 +1122,7 @@ def handle_text(message):
         bot.reply_to(message, "🔒 𝐁𝐨𝐭 𝐢𝐬 𝐥𝐨𝐜𝐤𝐞𝐝!")
         return
     if text == "📢 Updates Channel":
-        bot.send_message(message.chat.id, f"📢 𝐉𝐨𝐢𝐧 𝐨𝐮𝐫 𝘿𝙚𝙫𝙚𝙡𝙤𝙥𝙚𝙧 𝘼𝙥𝙪𝙧𝙗𝙤 𝐮𝐩𝐝𝐚𝐭𝐞𝐬:\n{UPDATE_CHANNEL}")
+        bot.send_message(message.chat.id, f"📢 𝐉𝐨𝐢𝐧 𝐨𝐮𝐫 APURBO DEV 𝐮𝐩𝐝𝐚𝐭𝐞𝐬:\n{UPDATE_CHANNEL}")
     elif text == "📤 Upload File":
         handle_upload_request(message)
     elif text == "📂 Check Files":
@@ -1143,12 +1173,12 @@ def handle_upload_request(message):
 def show_user_files(message):
     """Show user's files with actions"""
     user_id = message.from_user.id
-    msg = send_spinner_animation(message.chat.id, "𝐋𝐨𝐚𝐝𝐢𝐧𝐠 𝘿𝙚𝙫𝙚𝙡𝙤𝙥𝙚𝙧 𝘼𝙥𝙪𝙧𝙗𝙤 𝐟𝐢𝐥𝐞𝐬...", duration=1)
+    msg = send_spinner_animation(message.chat.id, "𝐋𝐨𝐚𝐝𝐢𝐧𝐠 APURBO DEV 𝐟𝐢𝐥𝐞𝐬...", duration=1)
     files = user_files.get(user_id, [])
     if not files:
         text = """
 ╔══════════════════════════════════════╗
-║       📂 <b>𝘿𝙚𝙫𝙚𝙡𝙤𝙥𝙚𝙧 𝘼𝙥𝙪𝙧𝙗𝙤: YOUR FILES</b> 📂   ║
+║       📂 <b>APURBO DEV: YOUR FILES</b> 📂   ║
 ╠══════════════════════════════════════╣
 ║
 ║  𝐘𝐨𝐮 𝐡𝐚𝐯𝐞𝐧'𝐭 𝐮𝐩𝐥𝐨𝐚𝐝𝐞𝐝 𝐚𝐧𝐲 𝐟𝐢𝐥𝐞𝐬 𝐲𝐞𝐭!
@@ -1164,7 +1194,7 @@ def show_user_files(message):
         return
     text = """
 ╔══════════════════════════════════════╗
-║       📂 <b>𝘿𝙚𝙫𝙚𝙡𝙤𝙥𝙚𝙧 𝘼𝙥𝙪𝙧𝙗𝙤: YOUR FILES</b> 📂   ║
+║       📂 <b>APURBO DEV: YOUR FILES</b> 📂   ║
 ╠══════════════════════════════════════╣
 """
     markup = types.InlineKeyboardMarkup(row_width=2)
@@ -1193,7 +1223,7 @@ def show_subscriptions(message):
                    if data['expiry'] > datetime.now()}
     text = f"""
 ╔══════════════════════════════════════╗
-║     💳 <b>𝘿𝙚𝙫𝙚𝙡𝙤𝙥𝙚𝙧 𝘼𝙥𝙪𝙧𝙗𝙤: SUBSCRIPTIONS</b> 💳    ║
+║     💳 <b>APURBO DEV: SUBSCRIPTIONS</b> 💳    ║
 ╠══════════════════════════════════════╣
 ║
 ║  𝐀𝐜𝐭𝐢𝐯𝐞: {len(active_subs)}
@@ -1218,7 +1248,7 @@ def show_admin_panel(message):
         return
     admin_text = f"""
 ╔══════════════════════════════════════╗
-║       👑 <b>𝘿𝙚𝙫𝙚𝙡𝙤𝙥𝙚𝙧 𝘼𝙥𝙪𝙧𝙗𝙤: ADMIN PANEL</b> 👑   ║
+║       👑 <b>APURBO DEV: ADMIN PANEL</b> 👑   ║
 ╠══════════════════════════════════════╣
 ║
 ║  <b>📊 𝐒𝐭𝐚𝐭𝐢𝐬𝐭𝐢𝐜𝐬:</b>
@@ -1267,7 +1297,7 @@ def handle_document(message):
         return
     upload_text = f"""
 ╔══════════════════════════════════════╗
-║      📤 <b>𝘿𝙚𝙫𝙚𝙡𝙤𝙥𝙚𝙧 𝘼𝙥𝙪𝙧𝙗𝙤: UPLOADING</b> 📤     ║
+║      📤 <b>APURBO DEV: UPLOADING</b> 📤     ║
 ╠══════════════════════════════════════╣
 ║
 ║  📄 𝐅𝐢𝐥𝐞: <code>{file_name[:25]}</code>
@@ -1410,7 +1440,7 @@ def show_file_actions(call, file_name):
     status = "🟢 𝐑𝐮𝐧𝐧𝐢𝐧𝐠" if is_running else "🔴 𝐒𝐭𝐨𝐩𝐩𝐞𝐝"
     text = f"""
 ╔══════════════════════════════════════╗
-║       📄 <b>𝘿𝙚𝙫𝙚𝙡𝙤𝙥𝙚𝙧 𝘼𝙥𝙪𝙧𝙗𝙤 : FILE</b> 📄         ║
+║       📄 <b>APURBO DEV : FILE</b> 📄         ║
 ╠══════════════════════════════════════╣
 ║
 ║  {type_icon} <b>𝐍𝐚𝐦𝐞:</b> <code>{file_name[:25]}</code>
@@ -1458,7 +1488,7 @@ def stop_user_script(call, file_name):
     bot.answer_callback_query(call.id, "🛑 𝐒𝐭𝐨𝐩𝐩𝐢𝐧𝐠...")
     stop_text = f"""
 ╔══════════════════════════════════════╗
-║       🛑 <b>𝘿𝙚𝙫𝙚𝙡𝙤𝙥𝙚𝙧 𝘼𝙥𝙪𝙧𝙗𝙤: STOPPING</b> 🛑     ║
+║       🛑 <b>APURBO DEV: STOPPING</b> 🛑     ║
 ╠══════════════════════════════════════╣
 ║
 ║  📄 <code>{file_name[:25]}</code>
@@ -1477,7 +1507,7 @@ def stop_user_script(call, file_name):
         time.sleep(1)
         success_text = f"""
 ╔══════════════════════════════════════╗
-║       ✅ <b>𝘿𝙚𝙫𝙚𝙡𝙤𝙥𝙚𝙧 𝘼𝙥𝙪𝙧𝙗𝙤: STOPPED</b> ✅      ║
+║       ✅ <b>APURBO DEV: STOPPED</b> ✅      ║
 ╠══════════════════════════════════════╣
 ║
 ║  📄 <code>{file_name[:25]}</code>
@@ -1505,7 +1535,7 @@ def delete_user_file(call, file_name):
         return
     confirm_text = f"""
 ╔══════════════════════════════════════╗
-║      ⚠️ <b>𝘿𝙚𝙫𝙚𝙡𝙤𝙥𝙚𝙧 𝘼𝙥𝙪𝙧𝙗𝙤: DELETE?</b> ⚠️      ║
+║      ⚠️ <b>APURBO DEV: DELETE?</b> ⚠️      ║
 ╠══════════════════════════════════════╣
 ║
 ║  𝐀𝐫𝐞 𝐲𝐨𝐮 𝐬𝐮𝐫𝐞?
@@ -1534,7 +1564,7 @@ def confirm_delete_file(call, file_name):
     file_path = os.path.join(user_folder, file_name)
     delete_text = f"""
 ╔══════════════════════════════════════╗
-║       🗑️ <b>𝘿𝙚𝙫𝙚𝙡𝙤𝙥𝙚𝙧 𝘼𝙥𝙪𝙧𝙗𝙤: DELETING</b> 🗑️     ║
+║       🗑️ <b>APURBO DEV: DELETING</b> 🗑️     ║
 ╠══════════════════════════════════════╣
 ║
 ║  📄 <code>{file_name[:25]}</code>
@@ -1555,7 +1585,7 @@ def confirm_delete_file(call, file_name):
             time.sleep(1)
             success_text = f"""
 ╔══════════════════════════════════════╗
-║       ✅ <b>𝘿𝙚𝙫𝙚𝙡𝙤𝙥𝙚𝙧 𝘼𝙥𝙪𝙧𝙗𝙤: DELETED</b> ✅       ║
+║       ✅ <b>APURBO DEV: DELETED</b> ✅       ║
 ╠══════════════════════════════════════╣
 ║
 ║  📄 <code>{file_name[:25]}</code>
@@ -1604,7 +1634,7 @@ def show_script_logs(call, file_name):
                 logs = "𝐍𝐨 𝐨𝐮𝐭𝐩𝐮𝐭 𝐲𝐞𝐭..."
         log_text = f"""
 ╔══════════════════════════════════════╗
-║       📋 <b>𝘿𝙚𝙫𝙚𝙡𝙤𝙥𝙚𝙧 𝘼𝙥𝙪𝙧𝙗𝙤: LOGS</b> 📋         ║
+║       📋 <b>APURBO DEV: LOGS</b> 📋         ║
 ╠══════════════════════════════════════╣
 ║ 📄 <code>{file_name[:25]}</code>
 ╠══════════════════════════════════════╣
@@ -1653,7 +1683,7 @@ def stop_all_bots(call):
     if user_id != OWNER_ID and user_id not in admin_ids:
         bot.answer_callback_query(call.id, "❌ 𝐀𝐝𝐦𝐢𝐧 𝐨𝐧𝐥𝐲!")
         return
-    bot.answer_callback_query(call.id, "🛑 𝐒𝐭𝐨𝐩𝐩𝐢𝐧𝐠 𝐚𝐥𝐥 𝘿𝙚𝙫𝙚𝙡𝙤𝙥𝙚𝙧 𝘼𝙥𝙪𝙧𝙗𝙤 𝐛𝐨𝐭𝐬...")
+    bot.answer_callback_query(call.id, "🛑 𝐒𝐭𝐨𝐩𝐩𝐢𝐧𝐠 𝐚𝐥𝐥 APURBO DEV 𝐛𝐨𝐭𝐬...")
     stopped = 0
     for script_key in list(bot_scripts.keys()):
         try:
@@ -1696,7 +1726,7 @@ def show_admin_logs(call):
         logs = c.fetchall()
         conn.close()
         if logs:
-            text = "📋 <b>𝘿𝙚𝙫𝙚𝙡𝙤𝙥𝙚𝙧 𝘼𝙥𝙪𝙧𝙗𝙤 : RECENT LOGS</b>\n"
+            text = "📋 <b>APURBO DEV : RECENT LOGS</b>\n"
             for log in logs:
                 text += f"👤 {log[0]} | {log[1]}\n{log[2][:30]}...\n🕐 {log[3][:16]}\n"
         else:
@@ -1708,7 +1738,7 @@ def show_admin_logs(call):
 # --- Cleanup on Exit ---
 def cleanup_on_exit():
     """Cleanup running processes on exit"""
-    logger.info("𝐂𝐥𝐞𝐚𝐧𝐢𝐧𝐠 𝐮𝐩 𝘿𝙚𝙫𝙚𝙡𝙤𝙥𝙚𝙧 𝘼𝙥𝙪𝙧𝙗𝙤...")
+    logger.info("𝐂𝐥𝐞𝐚𝐧𝐢𝐧𝐠 𝐮𝐩 APURBO DEV...")
     for script_key in list(bot_scripts.keys()):
         try:
             script_info = bot_scripts[script_key]
@@ -1722,7 +1752,7 @@ atexit.register(cleanup_on_exit)
 def main():
     """Main function to run the bot"""
     logger.info("=" * 50)
-    logger.info("🤖 𝐒𝐭𝐚𝐫𝐭𝐢𝐧𝐠 𝘿𝙚𝙫𝙚𝙡𝙤𝙥𝙚𝙧 𝘼𝙥𝙪𝙧𝙗𝙤 🇧🇩 𝐁𝐨𝐭...")
+    logger.info("🤖 𝐒𝐭𝐚𝐫𝐭𝐢𝐧𝐠 APURBO DEV 🇧🇩 𝐁𝐨𝐭...")
     logger.info(f"📁 𝐁𝐚𝐬𝐞 𝐃𝐢𝐫: {BASE_DIR}")
     logger.info(f"📁 𝐔𝐩𝐥𝐨𝐚𝐝 𝐃𝐢𝐫: {UPLOAD_BOTS_DIR}")
     logger.info(f"💾 𝐃𝐚𝐭𝐚𝐛𝐚𝐬𝐞: {DATABASE_PATH}")
@@ -1739,7 +1769,7 @@ def main():
             logger.error("𝐑𝐞𝐚𝐝 𝐭𝐢𝐦𝐞𝐨𝐮𝐭! 𝐑𝐞𝐭𝐫𝐲𝐢𝐧𝐠...")
             time.sleep(5)
         except Exception as e:
-            logger.error(f"𝘿𝙚𝙫𝙚𝙡𝙤𝙥𝙚𝙧 𝘼𝙥𝙪𝙧𝙗𝙤, 𝐞𝐫𝐫𝐨𝐫: {e}", exc_info=True)
+            logger.error(f"APURBO DEV, 𝐞𝐫𝐫𝐨𝐫: {e}", exc_info=True)
             time.sleep(5)
 
 if __name__ == "__main__":
